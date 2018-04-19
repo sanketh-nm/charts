@@ -85,8 +85,23 @@ export default class PieChart extends BaseChart {
 		return `M${arcStartX} ${arcStartY}
 			A ${radius} ${radius} 0 ${largeArc} ${clockWise ? 1 : 0} ${arcEndX} ${arcEndY}
 			L${smallArcEndX} ${smallArcEndY}
-			A ${radius - width} ${radius - width} 0 ${largeArc} ${clockWise ? 0 : 1}
+			A ${radius - width} ${radius - width} 0 ${largeArc} ${clockWise ? 0: 1}
 			${smallArcStartX} ${smallArcStartY} z`;
+	}
+
+	makeSimpleDonut(){
+		const{centerX,centerY,radius} = this;
+		let width = radius / 3;
+		return `M${centerX} ${centerY}
+			m${-radius},0
+			a ${radius} ${radius},0 1,0 ${2 * radius},0
+			a ${radius} ${radius} 0 1,0 ${-2 * radius},0
+			z
+			M${centerX} ${centerY}
+			m${width - radius},0
+			a${radius - width} ${radius - width},0 0,1 ${2*(radius - width)},0
+			a${radius - width} ${radius - width},0 0,1 ${2*(width - radius)},0
+			z`;
 	}
 
 	make_graph_components(init){
@@ -105,9 +120,14 @@ export default class PieChart extends BaseChart {
 			const endAngle = curAngle = curAngle + diffAngle;
 			const startPosition = PieChart.getPositionByAngle(startAngle,radius);
 			const endPosition = PieChart.getPositionByAngle(endAngle,radius);
-			console.log(this.slice_totals);
-			const curPath = this.makeArcPathStr(startPosition, endPosition, largeArc);
-
+			console.log(startPosition, endPosition, this.clockWise, largeArc);
+			let curPath;
+			if(this.slice_totals.length < 2){
+				curPath = this.makeSimpleDonut();
+			}else{
+				curPath = this.makeArcPathStr(startPosition, endPosition, largeArc);
+			}
+			console.log(curPath);
 			let slice = makePath(curPath, 'pie-path', 'none', this.colors[i]);
 			slice.style.transition = 'transform .3s;';
 			this.draw_area.appendChild(slice);
@@ -123,8 +143,14 @@ export default class PieChart extends BaseChart {
 				angle:diffAngle
 			});
 			if(init){
+				let newPath;
+				if(this.slice_totals.length < 2){
+					newPath = this.makeSimpleDonut();
+				}else{
+					newPath = this.makeArcPathStr(startPosition, endPosition, largeArc);
+				}
 				this.elements_to_animate.push([{unit: slice, array: this.slices, index: this.slices.length - 1},
-					{d:this.makeArcPathStr(startPosition,endPosition,largeArc)},
+					{d:newPath},
 					650, "easein",null,{
 						d:curPath
 					}]);
