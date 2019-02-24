@@ -1,8 +1,9 @@
 <div align="center">
+    <h2>Modified version, the original one doesn't seem to be updated and has a bug with pie chart arcs bigger than 180. This implements a fix for the issue. </h2>
     <img src="https://github.com/frappe/design/blob/master/logos/charts-logo.svg" height="128">
     <h2>Frappe Charts</h2>
     <p align="center">
-        <p>GitHub-inspired modern, intuitive and responsive charts with zero dependencies</p>
+        <p>GitHub-inspired modern, intuitive and responsive charts with zero dependencies</p
         <a href="https://frappe.github.io/charts">
             <b>Explore Demos »</b>
         </a>
